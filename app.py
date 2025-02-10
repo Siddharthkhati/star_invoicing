@@ -41,7 +41,14 @@ def customers():
             customer_id = request.form.get("customer_id")
             try:
                 customer = Customer.get_by_id(customer_id)
-                customer.delete_instance()  # Delete the customer from the database
+                invoices = Invoice.select().where(Invoice.customer_id == customer_id)
+                for invoice in invoices:
+                    invoice_items = InvoiceItem.select().where(InvoiceItem.invoice_id == invoice.invoice_id)
+                    for item in invoice_items:
+                        item.delete_instance()
+
+                    invoice.delete_instance()
+                customer.delete_instance()
                 return redirect("/customers")
             except Customer.DoesNotExist:
                 return "Error: Customer does not exist", 400  # Handle invalid ID
@@ -92,8 +99,8 @@ def invoices():
 
             invoice = Invoice.get_or_none(Invoice.invoice_id == invoice_id)
             if invoice:
-                invoice.delete_instance()  # Delete invoice
-            return redirect("/invoices")  # ✅ Correctly indented
+                invoice.delete_instance()  
+            return redirect("/invoices")  
 
         total_amount = float(data.get("total_amount"))
         tax_percent = float(data.get("tax_percent"))
@@ -101,7 +108,6 @@ def invoices():
         items_json = data.get("invoice_items")
         items = json.loads(items_json)
 
-        # ✅ Ensure the invoice is saved before accessing its invoice_id
         invoice = Invoice.create(
             customer=data.get("customer_id"),
             customer_name=data.get("customer_name"),
