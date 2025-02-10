@@ -2,36 +2,61 @@
 
 {% block body %}
 
-<div class="d-flex justify-content-between">
-    <h3>Invoices</h3>
-    <a class="btn btn-primary" href="/new-invoice">+ New</a>
+<div class="container py-5">
+    <!-- Title & New Invoice Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark" style="color: #202A44;">Invoices</h2>
+        <a class="btn fw-semibold px-4 py-2 shadow-sm rounded-pill" 
+           href="/customers" 
+           style="background-color: #202A44; color: white;">
+            + New Invoice
+        </a>
+    </div>
+
+    <!-- Invoice Table -->
+    <div class="card border-0 shadow-lg rounded-4 bg-white">
+        <div class="card-body p-4">
+            <table class="table table-hover align-middle">
+                <thead style="background-color: #202A44; color: white;">
+                    <tr>
+                        <th scope="col" class="py-3 fw-bold">#</th>
+                        <th scope="col" class="py-3 fw-bold">Customer Name</th>
+                        <th scope="col" class="py-3 fw-bold">Payable Amount</th>
+                        <th scope="col" class="py-3 fw-bold">Invoice Date</th>
+                        <th scope="col" class="py-3 fw-bold text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    {% set id = loop.index %} 
+                    <tr class="fw-normal">
+                        <th scope="row">{{ id }}</th>
+                        <td>{{ invoice.customer.full_name }}</td>
+                        <td class="text-success">₹{{ invoice.payable_amount }}</td>
+                        <td>{{ invoice.date }}</td>
+                        <td class="text-center d-flex justify-content-center gap-2">
+                            <!-- View Button -->
+                            <a href="/download/{{ invoice.invoice_id }}" 
+                               class="btn btn-sm fw-semibold shadow-sm rounded-pill px-3 py-1"
+                               style="border: 1px solid #202A44; color: #202A44;">
+                                View ⬇️
+                            </a>
+                            
+                            <!-- Delete Form -->
+                            <form method="POST" action="/invoices" onsubmit="return confirm('Are you sure you want to delete this invoice?');">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="invoice_id" value="{{ invoice.invoice_id }}">
+                                <button type="submit" class="btn btn-sm btn-danger shadow-sm rounded-pill px-3 py-1">
+                                    Delete ❌
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
-<ol>
-    
-</ol>
-
-
-<table class="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Customer Name</th>
-        <th scope="col">Payable Amount</th>
-        <th scope="col"></th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for invoice in invoices %}
-        <tr>
-            <th scope="row">{{ invoice.invoice_id }}</th>
-            <td>{{ invoice.customer.full_name }}</td>
-            <td>₹{{ invoice.payable_amount }}</td>
-            <td>⬇️</td>
-        </tr>
-    {% endfor %}
-      
-    </tbody>
-  </table>
 
 {% endblock %}

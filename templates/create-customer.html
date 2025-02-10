@@ -1,21 +1,43 @@
 {% extends "base.html" %}
 
-
 {% block body %}
-<h2>Create Customer</h2>
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100" style="background-color: #F4F7FC;">
 
-<form class="m-5" action="/customers" method="post">
-
-    <div class="mb-3">
-        <label for="full_name" class="form-label">Full Name</label>
-        <input required type="text" name="full_name" class="form-control" id="full_name" placeholder="Full Name">
-    </div>
-    <div class="mb-3">
-        <label for="address" class="form-label">Address</label>
-        <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+    <!-- Page Title -->
+    <div class="text-center mb-4">
+        <h1 class="fw-bold text-dark" style="font-size: 2rem;">Add New Customer</h1>
+        <p class="text-muted" style="font-size: 1rem;">Please enter the customer details carefully.</p>
     </div>
 
+    <!-- Form Card -->
+    <div class="col-lg-5 col-md-7 col-sm-10">
+        <div class="card border-0 shadow-lg p-4 rounded-3" style="background-color: #FFFFFF;">
+            <h4 class="text-center fw-bold mb-3 text-dark">Customer Information</h4>
 
-    <input class="btn btn-primary" type="submit" value="Save">
-</form>
+            <form action="/customers" method="post">
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label for="full_name" class="form-label fw-semibold text-secondary">Full Name</label>
+                    <input type="text" name="full_name" class="form-control rounded-2 border-light shadow-sm px-3 py-2"
+                           id="full_name" placeholder="Enter full name" required>
+                </div>
+
+                <!-- Address -->
+                <div class="mb-4">
+                    <label for="address" class="form-label fw-semibold text-secondary">Address</label>
+                    <textarea class="form-control rounded-2 border-light shadow-sm px-3 py-2" id="address"
+                              name="address" rows="3" placeholder="Enter customer address" required></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg fw-bold"
+                            style="background-color: #1D3557; border: none; padding: 8px 0; transition: 0.3s;">
+                        Save Customer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

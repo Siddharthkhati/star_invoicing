@@ -1,9 +1,99 @@
 {% extends "base.html" %}
 
 {% block body %}
-<ul>
-    {% for customer in customers %}
-        <li>{{ customer.id }}. {{ customer.full_name }} | {{ customer.address }}</li>
-    {% endfor %}
-</ul>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📋 Customers</h2>
+
+    <!-- New Customer Button (Shifted Right) -->
+    <div class="d-flex justify-content-end mb-4">
+        <a href="/new-customer" class="btn px-4 py-2 rounded-pill fw-semibold shadow-sm"
+            style="background-color: #202A44; color: white;">
+            ➕ Add New Customer
+        </a>
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <ul class="list-group">
+                {% for customer in customers %}
+                {% set id = loop.index %} 
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <strong>{{ id }}.</strong> {{ customer.full_name }} | {{ customer.address }}
+                    </span>
+                    <div>
+                        <!-- Edit Button -->
+                        <button type="button" class="btn btn-warning btn-sm edit-btn" data-id="{{ customer.id }}"
+                            data-name="{{ customer.full_name }}" data-address="{{ customer.address }}">
+                            Edit
+                        </button>
+
+                        <a href="/new-invoice/{{ customer.id }}" class="btn btn-primary btn-sm">
+                            Create Invoice
+                        </a>
+
+                        <!-- Delete Form -->
+                        <form action="/customers" method="POST" class="d-inline">
+                            <input type="hidden" name="customer_id" value="{{ customer.id }}">
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this customer?')">
+                                ❌ Delete
+                            </button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Customer Modal -->
+<div class="modal fade" id="editCustomerModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Edit Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-customer-form" action="/customers" method="POST">
+                    <input type="hidden" name="customer_id" id="edit-customer-id">
+                    <input type="hidden" name="action" value="update">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="full_name" class="form-control" id="edit-full-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control" id="edit-address" required>
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">💾 Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+<!-- JavaScript to Open and Auto-Fill Modal -->
+<script>
+    document.querySelectorAll(".edit-btn").forEach(button => {
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.getElementById("edit-customer-id").value = this.dataset.id;
+            document.getElementById("edit-full-name").value = this.dataset.name;
+            document.getElementById("edit-address").value = this.dataset.address;
+
+            // Open the modal programmatically
+            let modal = new bootstrap.Modal(document.getElementById("editCustomerModal"));
+            modal.show();
+        });
+    });
+</script>
 {% endblock %}

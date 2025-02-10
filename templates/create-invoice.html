@@ -1,103 +1,117 @@
 {% extends "base.html" %}
 
 {% block body %}
-<h3>Create New Invoice</h3>
+<div class="container mt-5">
+    <div class="card p-4 shadow-lg" style="border-radius: 12px; background: rgba(255, 255, 255, 0.9);">
+        <h3 class="text-center text-dark fw-bold mb-3">🧾 Create New Invoice</h3>
 
-<form class="m-5" action="/invoices" method="post">
-    <div class="mb-3">
-        <label for="customer" class="form-label">Customer</label>
-        <input required type="number" name="customer" class="form-control" id="customer" placeholder="Customer ID">
-    </div>
-
-    <div class="mb-3">
-        <label for="date" class="form-label">Invoice Date</label>
-        <input required type="date" name="date" class="form-control" id="date" placeholder="Invoice Date">
-    </div>
-
-
-    <div>
-        <label>Items</label>
-    </div>
-    <table class="table mb-5">
-        <thead>
-        <tr>
-            <th scope="col">Item Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Qty</th>
-            <th scope="col">Total Amount</th>
-            <th scope="col"></th>
-        </tr>
-        </thead>
-        <tbody id="itemsContainer">
-
-        </tbody>
-        <caption>
-            <button id="add-item-button" class="btn btn-secondary">Add Item</button>
-        </caption>
-    </table>
-
-    <input hidden value="[]" name="invoice_items" type="text" id="invoice_items">
-
-    <div class="mb-3">
-        <label for="total_amount" class="form-label">Total Amount</label>
-        <input value="0" readonly required type="number" name="total_amount" class="form-control" id="total_amount" placeholder="Total Amount">
-    </div>
-
-    <div class="mb-3">
-        <label for="tax_percent" class="form-label">Tax Percent</label>
-        <input value="0" required type="number" name="tax_percent" class="form-control" id="tax_percent" placeholder="Tax Percent">
-    </div>
-
-    <div class="mb-3">
-        <label for="payable_amount" class="form-label">Payable Amount</label>
-        <input value="0" readonly required type="number" name="payable_amount" class="form-control" id="payable_amount" placeholder="Payable Amount">
-    </div>
-
-
-    <div>
-        <input class="btn btn-primary" type="submit" value="Save">
-    </div>
-</form>
-
-<!-- Dialog -->
-<div class="modal" id="addItemDialog" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add Item</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="item-form">
-            <div class="mb-3">
-                <label for="item_name" class="form-label">Item Name</label>
-                <input required type="text" name="item_name" class="form-control" id="item_name">
+        <form action="/invoices" method="post">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="customer_id" class="form-label fw-semibold">Customer ID</label>
+                    <input readonly type="number" name="customer_id" class="form-control border-secondary shadow-sm" 
+                           id="customer_id" value="{{ customer.id }}">
+                </div>
+            
+                <div class="col-md-6">
+                    <label for="customer_name" class="form-label fw-semibold">Customer Name</label>
+                    <input readonly type="text" name="customer_name" class="form-control border-secondary shadow-sm" 
+                           id="customer_name" value="{{ customer.full_name }}">
+                </div>
+            
+                <div class="col-md-6">
+                    <label for="date" class="form-label fw-semibold">Invoice Date</label>
+                    <input required type="date" name="date" class="form-control border-secondary shadow-sm" id="date">
+                </div>
             </div>
 
+            <hr class="my-4">
 
-            <div class="mb-3">
-                <label for="price" class="form-label">Price</label>
-                <input required type="number" name="price" class="form-control" id="price">
+            <h5 class="text-secondary fw-bold mb-3">🛒 Invoice Items</h5>
+            <div class="table-responsive">
+                <table class="table table-hover text-center align-middle">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsContainer" required></tbody>
+                </table>
             </div>
 
-            <div class="mb-3">
-                <label for="qty" class="form-label">Quantity</label>
-                <input required type="number" value="1" name="qty" class="form-control" id="qty">
+            <button id="add-item-button" class="btn btn-outline-dark btn-sm px-3 fw-semibold">+ Add Item</button>
+
+            <input type="hidden" value="[]" name="invoice_items" id="invoice_items">
+
+            <div class="row g-3 mt-4">
+                <div class="col-md-4">
+                    <label for="total_amount" class="form-label fw-semibold">Total Amount</label>
+                    <input readonly required type="number" name="total_amount" class="form-control border-dark shadow-sm" id="total_amount" value="0">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="tax_percent" class="form-label fw-semibold">Tax %</label>
+                    <input required type="number" name="tax_percent" class="form-control border-dark shadow-sm" id="tax_percent" value="0">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="payable_amount" class="form-label fw-semibold">Payable Amount</label>
+                    <input readonly required type="number" name="payable_amount" class="form-control border-dark shadow-sm" id="payable_amount" value="0">
+                </div>
             </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button id="save-item-button" type="button" class="btn btn-primary">Add</button>
-        </div>
-      </div>
+
+            <div class="text-center mt-4">
+                <input class="btn w-100 py-2 fw-bold shadow-sm text-white" type="submit" value="Save Invoice" style="background-color: #202A44; border: none;">
+            </div>
+        </form>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- Add Item Modal -->
+<div class="modal fade" id="addItemDialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Add Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body">
+                <form id="item-form">
+                    <div class="mb-3">
+                        <label for="item_name" class="form-label fw-semibold">Item Name</label>
+                        <input required type="text" name="item_name" class="form-control border-secondary shadow-sm" id="item_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label fw-semibold">Price</label>
+                        <input required type="number" name="price" class="form-control border-secondary shadow-sm" id="price">
+                    </div>
+                    <div class="mb-3">
+                        <label for="qty" class="form-label fw-semibold">Quantity</label>
+                        <input required type="number" value="1" name="qty" class="form-control border-secondary shadow-sm" id="qty">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="save-item-button" type="button" class="btn btn-dark">Add Item</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 
 <script>
-    const invoiceItems = [];
+    let invoiceItems = [];
+    let itemIdCounter = 0;
+    let editingItemId = null;
 
     const addItemButton = document.getElementById("add-item-button")
     const saveItemButton = document.getElementById("save-item-button")
@@ -112,42 +126,71 @@
     })
 
     saveItemButton.addEventListener("click", () => {
-        // itemForm
-        const itemForm = document.getElementById("item-form")
+        const itemForm = document.getElementById("item-form");
         const formData = new FormData(itemForm);
 
-        invoiceItems.push({
+        const updatedItem = {
+            id: editingItemId !== null ? editingItemId : itemIdCounter++,
             item_name: formData.get("item_name"),
-            qty: formData.get("qty"),
-            price: formData.get("price"),
-            amount: formData.get("qty") * formData.get("price")
-        })
+            qty: parseInt(formData.get("qty")),
+            price: parseFloat(formData.get("price")),
+            amount: parseInt(formData.get("qty")) * parseFloat(formData.get("price"))
+        };
 
-        const itemsContainer = document.getElementById("itemsContainer")
+        if (editingItemId !== null) {
+            invoiceItems = invoiceItems.map(item => item.id === editingItemId ? updatedItem : item);
+            editingItemId = null;
+        } else {
+            invoiceItems.push(updatedItem);
+        }
+
+        updateItemsTable();
+        itemForm.reset();
+        addItemDialog.hide();
+    });
+
+
+    function updateItemsTable() {
+        const itemsContainer = document.getElementById("itemsContainer");
         let rowsHTML = "";
         for (let item of invoiceItems) {
             rowsHTML += `
-                <tr>
+            <tr id="row-${item.id}">
                 <td>${item.item_name}</td>
                 <td>${item.price}</td>
                 <td>${item.qty}</td>
                 <td>${item.amount}</td>
-                </tr>
-            `
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editItem(${item.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
+                </td>
+            </tr>
+        `;
         }
         itemsContainer.innerHTML = rowsHTML;
 
-
         totalAmountField.value = getTotalAmount();
-        
-        // recalculate payable amount
         recalculatePayableAmount();
-
         invoiceItemsField.value = JSON.stringify(invoiceItems);
+    }
 
-        itemForm.reset();
-        addItemDialog.hide();
-    })
+    function deleteItem(id) {
+        console.log("the function is being called")
+        invoiceItems = invoiceItems.filter(item => item.id !== id);
+        updateItemsTable();
+    }
+
+    function editItem(id) {
+        const item = invoiceItems.find(item => item.id === id);
+        if (!item) return;
+
+        document.getElementById("item_name").value = item.item_name;
+        document.getElementById("price").value = item.price;
+        document.getElementById("qty").value = item.qty;
+
+        editingItemId = id;
+        addItemDialog.show();
+    }
 
     function getTotalAmount() {
         let sum = 0;
@@ -160,7 +203,7 @@
     const taxPercentField = document.getElementById("tax_percent")
     const payableAmountField = document.getElementById("payable_amount")
 
-    taxPercentField.addEventListener("change", (e) => { 
+    taxPercentField.addEventListener("change", (e) => {
         // recalculate payable amount
         recalculatePayableAmount();
     })
