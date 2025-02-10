@@ -2,19 +2,50 @@
 
 1. Read Peewee docs
 2. Read Flask docs
-3. Re-watch lecture
+3. Re-watch the lecture
 4. Do the homework
-5. Start your project!
+5. Start setting up Library management your project!
 
 ## Homework
 
 * Implement edit and delete of customers
 * Implement edit and delete of invoices
-    * how will you handle delete of invoice items?
+  * how will you handle automatic delete of invoice items?
 * Clean up the JS code
 * Fix "calculation" of total amount in backend
-* Fake e-Invoicing government portal
 
+### Autocomplete Customer
+
+Use [autocomp.js](https://github.com/knadh/autocomp.js) to add autocomplete for customers in Invoice form. Bonus: show the name of the customer instead of ID.
+
+
+### e-Invoicing via Government of Agrabah
+
+Your task is to integrate with an external service for generating `ARN` number for each invoice that is created in your system. Here is the API spec of the portal you have to integrate with:
+
+```txt
+BASE URL: https://frappe.school
+
+POST /api/method/generate-pro-einvoice-id
+
+## Example Request Data (JSON):
+
+{
+    "customer_name": "John Doe",
+    "invoice_id": 3,
+    "payable_amount": 3000
+}
+
+## Example Response
+
+{
+    "arn": "7e4ef9eb"
+}
+```
+
+Create a new column named `gov_arn` in your invoice model and store the "arn" received from the above API in that.
+
+> Hint: Install and use [this](https://pypi.org/project/requests/).
 
 ### Snippets
 
@@ -25,15 +56,14 @@ Person(Model)
 p = Person(full_name="John Doe") # Person.create(full_name="John Doe")
 p.save()
 
-
 # Read
 
 p = Person.get_by_id(1)
 
 # Update
+
 p.full_name = "Jenny Doe"
 p.save()
-
 
 # Delete
 
