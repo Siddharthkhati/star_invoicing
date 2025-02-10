@@ -12,13 +12,17 @@ class Customer(Model):
 
 class Invoice(Model):
     invoice_id = AutoField()
-    customer = ForeignKeyField(Customer)
+    customer = ForeignKeyField(Customer, backref="invoices")
+    customer_name = CharField(200)  
     date = DateField()
     total_amount = FloatField()
     tax_percent = FloatField()
     payable_amount = FloatField()
+    arn = CharField(null=True)
+
     class Meta:
         database = db
+
 
 class InvoiceItem(Model):
     item_name = CharField(200, unique=True)
