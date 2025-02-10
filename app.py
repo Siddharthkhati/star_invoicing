@@ -99,6 +99,9 @@ def invoices():
 
             invoice = Invoice.get_or_none(Invoice.invoice_id == invoice_id)
             if invoice:
+                invoice_items = InvoiceItem.select().where(InvoiceItem.invoice_id == invoice_id)
+                for item in invoice_items:
+                    item.delete_instance()
                 invoice.delete_instance()  
             return redirect("/invoices")  
 
