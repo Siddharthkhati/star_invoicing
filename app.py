@@ -67,7 +67,6 @@ def customers():
             except Customer.DoesNotExist:
                 return "Error: Customer does not exist", 400
 
-        # If it's not delete, it's a new customer creation
         full_name = request.form.get("full_name")
         address = request.form.get("address")
         customer = Customer(full_name=full_name, address=address)
@@ -105,11 +104,14 @@ def invoices():
                 invoice.delete_instance()  
             return redirect("/invoices")  
 
-        total_amount = float(data.get("total_amount"))
         tax_percent = float(data.get("tax_percent"))
 
         items_json = data.get("invoice_items")
         items = json.loads(items_json)
+
+        total_amount = 0
+        for item in items:
+            total_amount += int(item.get("qty")) * float(item.get("price"))
 
         invoice = Invoice.create(
             customer=data.get("customer_id"),
