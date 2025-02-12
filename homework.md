@@ -13,7 +13,6 @@
   * how will you handle automatic delete of invoice items?
 * Clean up the JS code
 * Fix "calculation" of total amount in backend
-
 ### Autocomplete Customer
 
 Use [autocomp.js](https://github.com/knadh/autocomp.js) to add autocomplete for customers in Invoice form. Bonus: show the name of the customer instead of ID.

@@ -161,9 +161,10 @@
                 <td>${item.qty}</td>
                 <td>${item.amount}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" onclick="editItem(${item.id})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="editItem(${item.id})">Edit</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
                 </td>
+
             </tr>
         `;
         }

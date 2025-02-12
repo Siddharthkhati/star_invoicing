@@ -12,7 +12,7 @@ class Customer(Model):
 
 class Invoice(Model):
     invoice_id = AutoField()
-    customer = ForeignKeyField(Customer, backref="invoices")
+    customer = ForeignKeyField(Customer, backref="invoices", on_delete="CASCADE")  # Use string 'CASCADE'
     customer_name = CharField(200)  
     date = DateField()
     total_amount = FloatField()
@@ -29,7 +29,7 @@ class InvoiceItem(Model):
     qty = IntegerField()
     rate = FloatField()
     amount = FloatField()
-    invoice = ForeignKeyField(Invoice, backref="items", lazy_load=False)
+    invoice = ForeignKeyField(Invoice, backref="items", lazy_load=False, on_delete="CASCADE")  # Use string 'CASCADE'
 
     class Meta:
         database = db

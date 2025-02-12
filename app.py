@@ -1,3 +1,4 @@
+
 import requests
 import json
 
@@ -41,15 +42,10 @@ def customers():
             customer_id = request.form.get("customer_id")
             try:
                 customer = Customer.get_by_id(customer_id)
-                invoices = Invoice.select().where(Invoice.customer_id == customer_id)
-                for invoice in invoices:
-                    invoice_items = InvoiceItem.select().where(InvoiceItem.invoice_id == invoice.invoice_id)
-                    for item in invoice_items:
-                        item.delete_instance()
-
-                    invoice.delete_instance()
-                customer.delete_instance()
+                customer.delete_instance(recursive=True)  # ✅ Automatically deletes related invoices and invoice items
                 return redirect("/customers")
+            except Customer.DoesNotExist:
+                return "Error: Customer does not exist", 400 
             except Customer.DoesNotExist:
                 return "Error: Customer does not exist", 400  # Handle invalid ID
         
@@ -67,7 +63,6 @@ def customers():
             except Customer.DoesNotExist:
                 return "Error: Customer does not exist", 400
 
-        # If it's not delete, it's a new customer creation
         full_name = request.form.get("full_name")
         address = request.form.get("address")
         customer = Customer(full_name=full_name, address=address)
@@ -99,17 +94,17 @@ def invoices():
 
             invoice = Invoice.get_or_none(Invoice.invoice_id == invoice_id)
             if invoice:
-                invoice_items = InvoiceItem.select().where(InvoiceItem.invoice_id == invoice_id)
-                for item in invoice_items:
-                    item.delete_instance()
-                invoice.delete_instance()  
-            return redirect("/invoices")  
+                invoice.delete_instance(recursive=True)  # ✅ Automatically deletes related invoice items
+            return redirect("/invoices")
 
-        total_amount = float(data.get("total_amount"))
         tax_percent = float(data.get("tax_percent"))
 
         items_json = data.get("invoice_items")
         items = json.loads(items_json)
+
+        total_amount = 0
+        for item in items:
+            total_amount += int(item.get("qty")) * float(item.get("price"))
 
         invoice = Invoice.create(
             customer=data.get("customer_id"),
